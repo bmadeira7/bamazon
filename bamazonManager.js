@@ -42,7 +42,7 @@ function listOptions() {
         } else if (answers.userChoice === "Add to Inventory") {
             addToInventory();
         } else if (answers.userChoice === "Add New Product") {
-            //  addNewProduct();
+            addNewProduct();
         } else if (answers.userChoice === "Exit program") {
             process.exit();
         }
@@ -111,22 +111,54 @@ function updateProduct(location, pass) {
     connection.query(
         "UPDATE products SET stock_quantity = ? WHERE item_id = ?",
         [pass, location],
-        function (err, res) { 
+        function (err, res) {
             if (err) console.log(err);
             console.log(res.affectedRows + " products updated!\n")
             process.exit();
         }
-        );
-       
+    );
+
 }
 
-function addNewProduct(){
-    console.log("Adding a new product...\n")
-    connection.query(
+function addNewProduct() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Please type the name of product you want to add",
+            name: "itemName"
+        },
+        {
+            type: "input",
+            message: "Please type the department where the product can be found",
+            name: "itemDept"
+        },
+        {
+            type: "input",
+            message: "Please set the price of each unit ",
+            name: "itemPrice"
+        },
+        {
+            type: "input",
+            message: "How many units do you want to add",
+            name: "quantity"
+        }
+    ]).then(function (answers) {
 
+        console.log("\nAdding a new product...\n")
+        connection.query(
+            "INSERT INTO products SET ?",
+            {
+                product_name: answers.itemName,
+                department_name: answers.itemDept,
+                price: answers.itemPrice,
+                stock_quantity: answers.quantity
+            },
+            function (err, res) {
+                console.log(res.affectedRows + " new product inserted!\n");
+                process.exit();
 
-
-
-    )
+            }
+            )
+    })
 
 }
