@@ -24,22 +24,27 @@ function listOptions() {
     var choicesArray = ["View Products for Sale",
         "View Low Inventory",
         "Add to Inventory",
-        "Add New Product"]
+        "Add New Product",
+        "Exit program"]
     inquirer.prompt([
         {
             type: 'list',
             message: 'Select option',
             choices: choicesArray,
-            name: "userChoices"
+            name: "userChoice"
         }
     ]).then(function (answers) {
-        console.log(answers)
-        if (answers.userChoices === "View Products for Sale") {
+
+        if (answers.userChoice === "View Products for Sale") {
             displayItems();
-        } else if (answers.userChoices === "View Low Inventory") {
+        } else if (answers.userChoice === "View Low Inventory") {
             lowInventoryCheck();
-        } else if (answers.userChoices === "Add to Inventory"){
+        } else if (answers.userChoice === "Add to Inventory") {
             addToInventory();
+        } else if (answers.userChoice === "Add New Product") {
+            //  addNewProduct();
+        } else if (answers.userChoice === "Exit program") {
+            process.exit();
         }
 
     })
@@ -70,6 +75,58 @@ function lowInventoryCheck() {
     })
 }
 
-function addToInventory(){
-    
+function addToInventory() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Please type the item ID of product you want to add",
+            name: "itemID"
+        },
+        {
+            type: "input",
+            message: "How many units do you want to add",
+            name: "quantity"
+        }
+
+
+    ]).then(function (answers) {
+        connection.query("SELECT stock_quantity FROM products WHERE item_id = ?", [answers.itemID], function (err, res) {
+
+            var quantityAdd = parseInt(answers.quantity);
+            var updatedInventory = parseInt(res[0].stock_quantity) + quantityAdd;
+            console.log("\nItem ID of product you wish to add: " + answers.itemID)
+            console.log("Current stock: " + res[0].stock_quantity)
+            console.log("you want to add: " + quantityAdd)
+            console.log("New updated stock: " + updatedInventory)
+            if (err) {
+                return console.log(err);
+            } else {
+                updateProduct(answers.itemID, updatedInventory)
+            }
+        })
+    })
+}
+function updateProduct(location, pass) {
+    console.log("Updating quantities...\n");
+    connection.query(
+        "UPDATE products SET stock_quantity = ? WHERE item_id = ?",
+        [pass, location],
+        function (err, res) { 
+            if (err) console.log(err);
+            console.log(res.affectedRows + " products updated!\n")
+            process.exit();
+        }
+        );
+       
+}
+
+function addNewProduct(){
+    console.log("Adding a new product...\n")
+    connection.query(
+
+
+
+
+    )
+
 }

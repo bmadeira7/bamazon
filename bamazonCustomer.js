@@ -49,8 +49,6 @@ function askUser() {
             name: "quantity",
             message: "How many units of this product would you like to purchase?\n"
         },
-
-
     ]).then(function (answers) {
         if (answers.quantity > dataB[answers.productID - 1].stock_quantity) {
 
@@ -64,15 +62,9 @@ function askUser() {
             console.log("Your grand total for todays purchase is: $" + dataB[answers.productID - 1].price * answers.quantity);
             console.log("Thank you for your business!!!");
         }
-        
         process.exit();
     })
-
-
-
-
 }
-
 function updateProduct(location, pass) {
     console.log("Updating quantities...\n");
     var query = connection.query(
@@ -86,13 +78,8 @@ function updateProduct(location, pass) {
             }
         ],
         function (err, res) {
-
-
-
         }
     );
-
-
 }
 
 
